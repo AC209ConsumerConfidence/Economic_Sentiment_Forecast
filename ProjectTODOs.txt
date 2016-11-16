@@ -4,10 +4,15 @@ General:
 Extract news data from API
 Try out different feature extraction techniques
 Try out multiple ARIMA/
-Jose:
 
+Jose:
+2007-2011
+CountVectorizer/Tfidf
 
 Kevin:
-
+2000-2006
+Bigrams
 
 Mali:
+2012-2106
+Sentiment dictionary
