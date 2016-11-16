@@ -1,0 +1,13 @@
+Project To Do
+
+General:
+Extract news data from API
+Try out different feature extraction techniques
+Try out multiple ARIMA/
+Jose:
+
+
+Kevin:
+
+
+Mali:
