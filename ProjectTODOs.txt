@@ -10,7 +10,7 @@ Jose:
 CountVectorizer/Tfidf
 
 Kevin:
-2000-2006
+1998-2006
 Bigrams
 
 Mali:
