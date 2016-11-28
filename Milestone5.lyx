@@ -1,0 +1,300 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass article
+\begin_preamble
+\usepackage{textcomp}
+\usepackage{fancyhdr}
+\usepackage{braket}
+\usepackage{bbold}
+\pagestyle{fancy}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Cov}{\mathbb{C}ov}
+\newcommand{\Cor}{\mathbb{C}or}
+\lhead{AC209a}
+\chead{}
+\rhead{Kevin Shain, Mali Akmanalp, José Ramón Morales Arilla}
+\lfoot{}
+\cfoot{\thepage}
+\rfoot{}
+\renewcommand{\headrulewidth}{1.5pt}
+\renewcommand{\footrulewidth}{0.0pt}
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize letterpaper
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 1in
+\topmargin 1in
+\rightmargin 1in
+\bottommargin 1in
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation 0in
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Milestone 5: Proposal of Future Work
+\end_layout
+
+\begin_layout Author
+Kevin Shain, Mali Akmanalp, José Ramón Morales Arilla
+\end_layout
+
+\begin_layout Date
+11/28/16
+\end_layout
+
+\begin_layout Section*
+Feature selection
+\end_layout
+
+\begin_layout Subsection*
+Unigrams and Bigrams
+\end_layout
+
+\begin_layout Standard
+In dealing with natural language, extracting the most meaningful features
+ is essential for building a model.
+ It is not clear how any given word relates to any other word.
+ Naively, we could view all the words as independent features with the individua
+l word count per document or term-frequency-inverse-document-frequency as
+ the quantitative value of that feature for a given document.
+ You could go beyond this and treat neighboring words as bigrams because
+ the relative placement of words might have some information.
+ A simple example is that the 
+\begin_inset Quotes eld
+\end_inset
+
+strong
+\begin_inset Quotes erd
+\end_inset
+
+ in 
+\begin_inset Quotes eld
+\end_inset
+
+strong coffee
+\begin_inset Quotes erd
+\end_inset
+
+ means something quite different than in 
+\begin_inset Quotes eld
+\end_inset
+
+strong steel
+\begin_inset Quotes erd
+\end_inset
+
+.
+ There are many such words and phrases like that in English so including
+ bigrams in our feature 
+\begin_inset Quotes eld
+\end_inset
+
+vocabulary
+\begin_inset Quotes erd
+\end_inset
+
+ makes sense.
+ 
+\end_layout
+
+\begin_layout Standard
+We have experimented with creating a unigram and bigram vocabulary from
+ the news data.
+ The unigrams are chosen based on a reasonable maximum occurance frequency,
+ minimum occurance frequency, and eliminating stopwords.
+ The bigrams are a little bit more difficult to extract.
+ The reason is that there are many more bigrams possible and their occurances
+ are especially sparse.
+ For this reason, we use the Dunning Log Likelihood Ratio to evaluate how
+ meaningful the bigrams are.
+ Essentially, the log likelihood ratio determines how likely the constituent
+ words in the bigram are to occur together divided by their likelihood to
+ occur separately.
+ Then, we threshold the log likelihood ratios to keep only the bigrams with
+ words that occur together quite frequently compared to occuring separately.
+ As an example, the bigram with the greatest log likelihood ratio in our
+ dataset is 
+\begin_inset Quotes eld
+\end_inset
+
+New York
+\begin_inset Quotes erd
+\end_inset
+
+.
+ This makes a lot of sense as especially 
+\begin_inset Quotes eld
+\end_inset
+
+York
+\begin_inset Quotes erd
+\end_inset
+
+ almost never occurs without being preceeded by 
+\begin_inset Quotes eld
+\end_inset
+
+New
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The current state of this feature selection algorithm is that none of the
+ features are particularly correlated with the consumer confidence index
+ (CCI).
+ This is not entirely surprising as one would expect that each unigram or
+ bigram's occurances have little effect on CCI.
+ Some future work in this direction is to set better thresholds on the unigrams
+ and bigrams to get just the most meaningful vocabulary and the least noise.
+ Also, the model choice can do some 
+\begin_inset Quotes eld
+\end_inset
+
+averaging
+\begin_inset Quotes erd
+\end_inset
+
+ over the features that might reduce noise and enhance correlation with
+ CCI so experimenting with high-dimensional models may be good to try.
+\end_layout
+
+\begin_layout Subsection*
+Latent Dirichlet Allocation (LDA) Topic Modeling
+\end_layout
+
+\begin_layout Standard
+A promising approach to dimensional reduction of our vocabulary is topic
+ modeling.
+ We can choose the number of features we want to end up with as the number
+ of topics in our LDA model.
+ This algorithm assigns words in the vocabulary to topics and the documents
+ to topics in a way that most clearly separates the documents into the desired
+ number of topics.
+ In the end, we get a probability of each document coming from each of the
+ topics.
+ If we chose to have 10 topics, this compresses our high dimensional feature
+ space into just 10 features.
+ We can make sense of these topics by looking at the words assigned to them
+ and see if they are related and what that relation is.
+ Though one could imagine that the these topics are not correlated to CCI,
+ they seem to represent a powerful dimensional reduction that is not too
+ closely correlated to the average sentiment as calculated from a sentiment
+ dictionary.
+ For this reason, we might expect that average sentiment might be the most
+ important feature, but the topics could convey different and somewhat important
+ information.
+\end_layout
+
+\begin_layout Section*
+Modeling
+\end_layout
+
+\begin_layout Standard
+Since we are dealing with data points that are correlated in time, we have
+ to think about how to incorporate that temporal information in the model.
+ One thing to try might be a vector autoregression model.
+ In that case, we say that any lag less than 
+\begin_inset Formula $p$
+\end_inset
+
+ determined by the AR(p) model that we choose has a coefficient for prediction
+ the next value in the series.
+ This allows us to use all of the features to combine and predict the next
+ value of all of the predictors.
+ This then allows us to predict all of our features one time step ahead.
+ With that, we can fit a model without time dependence to determine how
+ the future feature prediction determines the future CCI prediction.
+ 
+\end_layout
+
+\begin_layout Standard
+A possibly more flexible approach is to just include certain lags or differences
+ in time as new features.
+ This is a potentially better because it takes the time information and
+ formulates it such that we can treat all observations as independent and
+ use the more complex models that we learned in class.
+ Furthermore, it seems that the topic information is highly seasonal so
+ incorporating lags of 12 months or differencing compared to 12 months prior
+ could lead to a parsimonious model that incorporates seasonality.
+ In other words, certain topics come up at certain times of year so the
+ value of the topic is mostly a measure of time, but the difference compared
+ to the same time last year could hold the most important information.
+\end_layout
+
+\begin_layout Standard
+Lastly, it is likely that we should choose a model that incorporates interaction
+s with the average sentiment score.
+ This is because the topics mainly tell whether the articles are talking
+ about technology, banking, stocks, bonds, advertising, housing etc., but
+ they don't say whether that topic occured in a positive of negative context.
+ Therefore, the interaction of sentiment and topic could be very useful
+ in the model.
+\end_layout
+
+\end_body
+\end_document
